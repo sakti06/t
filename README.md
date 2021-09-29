@@ -35,7 +35,8 @@ This file is created to make it easier for slave Pod IP addresses to be sent dir
 11. jmeter_influxdb_svc.yaml - list of services for Influxdb.
 12. jmeter_grafana_deploy.yaml - grafana deployment checklist.
 13. jmeter_grafana_svc.yaml - list of services deployed by grafana. NodePort is used by default. If it is running in the public cloud, it can be changed to LoadBalancer.
- 
+14. dashboard.sh - this script is used to automatically create the following:
+      
       (1) An influxdb database (Jmeter) in influxdb pod
   
       (2) Data source in grafana (jmeterdb)
