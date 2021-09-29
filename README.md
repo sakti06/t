@@ -1,17 +1,41 @@
-#Below is the description of each component in the repo:
+# Deployment of Jmeter cluster in AWS EKS
 
-jmeter_cluster_create.sh — This script will ask for a unique tenant name (namespace) and then it will go ahead to create the namespace and all the components (jmeter master, slaves, influxdb and grafana).
-N.B — Set the number of replicas you want to use for the slaves in the jmeter_slaves_deploy.yaml file before starting, normally the replicas should match the number of worker nodes that you have.
-jmeter_master_configmap.yaml — The config map for the Jmeter master deployment
-jmeter_master_deployment.yaml — The deployment manifest for the jmeter master.
-jmeter_slaves_deploy.yaml — The deployment manifest for the jmeter slaves.
-jmeter_slave_svc.yaml — The service manifest for the jmeter slave. It uses an headless service, this enables us to get just the jmeter slaves POD ip address directly, we don’t need the DNS or round robin for this. We created this so as to make easier to feed the slave pod IP addresses directly to the jmeter master, the advantage of this will be shown later.
-jmeter_influxdb_configmap.yaml — The config map for the influxdb deployment. This configures the influxdb to exposes port 2003 so as to support the graphite if you want to use the graphite storage method in addition to the default influxdb port. So you can use the influxdb deployment to support both the jmeter backend listener methods (graphite and influxdb).
-jmeter_influxdb_deploy.yaml — The deployment manifest for Influxdb
-jmeter_influxdb_svc.yaml — The service manifest for the Influxdb.
-jmeter_grafana_deploy.yaml — The grafana deployment manifest.
-jmeter_grafana_svc.yaml — The service manifest for the grafana deployment, it uses NodePort by default, you can change this to LoadBalancer if you are running this in a public cloud (and maybe setup a CNAME to shorten the name with a FQDN).
-jmeter_grafana_reporter.yaml — The deployment and service manifest of the reporter module.
-dashboard.sh — This script is used to create the following automatically: (1) An influxdb database (jmeter) in the influxdb pod. (2) A datasource (jmeterdb) in the grafana pod
-start_test.sh — This script is used to run the Jmeter test script automatically without you manually logging into the Jmeter master shell, it will ask for the location of the jmeter test script, then it will copy it to the jmeter master pod and initiate the test automatically towards the jmeter slaves.
-GrafanaJMeterTemplate.json — A prebuilt jmeter grafana dashboard, this can also be found in the jmeter installation folder (extras folder).
+## Deployment Topology
+![k8](https://user-images.githubusercontent.com/47892366/135235283-5b14aa1c-12c2-4f0c-8d64-a9b7a527d1ae.png)
+
+The test can be started from the master node, and the master node sends the corresponding test script to the corresponding slaves node. 
+The pod/nodes of the slave nodes is mainly used to generate pressure.
+
+## Files with Description
+1. Dockerfile base - Build Jmeter basic image
+
+2. Dockerfile master - Build Jmeter master image
+
+3. Dockerfile slave - Building Jmeter slave image
+
+
+4. jmeter_cluster_create.sh - this script will require a unique namespace, and then it will continue to create the namespace and all components 
+(jmeter master, slaves, infuxdb, and grafana).
+
+Note: before starting, please click jmeter_slaves_deploy.yaml Set the number of copies to be used for the slaves server in the file. 
+Usually, the number of copies should match the worker nodes that you have.
+
+5. jmeter_master_configmap.yaml - Application configuration of Jmeter master.
+
+6. jmeter_master_deploy.yaml - Deployment list of Jmeter master.
+
+7. jmeter_slaves_deploy.yaml - Deployment list of Jmeter slave.
+
+8. jmeter_slave_svc.yaml - service list of jmeter slave. Using headless service enables us to directly obtain the POD IP address of jmeter slave. 
+This file is created to make it easier for slave Pod IP addresses to be sent directly to jmeter master.
+
+9. jmeter_influxdb_configmap.yaml - application configuration of influxdb deployment.
+10. jmeter_influxdb_deploy.yaml - deployment manifest of Influxdb
+
+11. jmeter_influxdb_svc.yaml - list of services for Influxdb.
+12. jmeter_grafana_deploy.yaml - grafana deployment checklist.
+13. jmeter_grafana_svc.yaml - list of services deployed by grafana. NodePort is used by default. If it is running in the public cloud, it can be changed to LoadBalancer.
+ 
+      (1) An influxdb database (Jmeter) in influxdb pod
+  
+      (2) Data source in grafana (jmeterdb)
