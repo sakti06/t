@@ -13,6 +13,8 @@ The pod/nodes of the slave nodes is mainly used to generate pressure.
 
 3. Dockerfile slave - Building Jmeter slave image
 
+Note: After building images should be tagged and pushed to AWS ECR .Then image url of  from repos should be mentioned  in deployment file respectively eg: (master and slave deployment file) .
+
 
 4. jmeter_cluster_create.sh - this script will require a unique namespace, and then it will continue to create the namespace and all components 
 (jmeter master, slaves, infuxdb, and grafana).
